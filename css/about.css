@@ -1,0 +1,178 @@
+/* Base Styles */
+.info-about {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-about::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/aboutus-bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -1;
+}
+
+.info-content-a {
+    position: relative;
+    z-index: 1;
+    color: white;
+    padding: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* About Us Section */
+.aboutUs {
+    display: flex;
+    gap: 50px;
+    padding: 50px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.about-content {
+    /* display: flex; */
+    /* flex-direction: column; */
+    gap: 20px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+} */
+
+.who, .mission {
+    position: relative;
+    padding: 15px;
+    background: #fff;
+    box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.1), inset 0 -5px 5px rgba(0, 0, 0, 0.1);
+    border-bottom: 30px solid #AA210F;
+    outline: none;
+}
+
+.who::before, .mission::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -15px;
+    height: 15px;
+    background: inherit;
+    z-index: -1;
+}
+
+.about-img {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.about-img img {
+    width: 100%;
+    height: auto;
+}
+
+/* Team Section */
+.team {
+    background: #AA210F;
+    color: white;
+    text-align: center;
+    padding: 30px;
+}
+
+.card-team {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card-team div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-team img {
+    width: 250px;
+    height: 300px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .info-about {
+        height: 300px;
+    }
+    
+    .info-content-a h1 {
+        font-size: 24px;
+    }
+
+    .aboutUs {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .about-content {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0px;
+    }
+
+    .about-img {
+        max-width: 300px;
+    }
+
+    .team {
+        padding: 20px;
+    }
+
+    .card-team img {
+        width: 200px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .info-content-a h1 {
+        font-size: 20px;
+    }
+
+    .about-content h2 {
+        font-size: 20px;
+    }
+
+
+    .about-content {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0px;
+    }
+    
+    .about-img {
+        max-width: 100%;
+    }
+
+    .card-team img {
+        width: 150px;
+        height: 200px;
+    }
+}

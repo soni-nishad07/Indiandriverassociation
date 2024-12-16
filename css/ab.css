@@ -1,0 +1,42 @@
+<style>
+    @media print {
+    body {
+        font-family: Arial, sans-serif;
+        color: #000;
+        background-color: white;
+    }
+
+    .print-btn {
+        display: none; /* Hide the print button */
+    }
+
+    .driver-section {
+        page-break-after: always; /* Force each driver on a new page */
+    }
+
+    img {
+        max-width: 100%; /* Ensure images are scaled properly */
+        height: auto;
+    }
+
+    .content-wrapper {
+        position: relative;
+        width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .overlay {
+        display: block;
+        color: black;
+        text-align: left;
+    }
+
+    .driver_phto img, .signature img {
+        display: block;
+        max-width: 150px;
+        height: auto;
+    }
+}
+
+</style>
