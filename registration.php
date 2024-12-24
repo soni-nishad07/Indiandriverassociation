@@ -6,20 +6,20 @@ include('./partials/header.php');
 
 
     <?php
-    // Check if there's an error and display it
-    if (isset($_SESSION['error']) && !empty($_SESSION['error'])) {
-        echo "<div class='error-msg' style='color: red; text-align: center; margin-bottom: 15px;'>"
-            . $_SESSION['error'] . "</div>";
-        unset($_SESSION['error']); // Clear the error after displaying it
-    }
+// Check if there's an error and display it
+if (isset($_SESSION['error']) && !empty($_SESSION['error'])) {
+    echo "<div class='error-msg' style='color: red; text-align: center; margin-bottom: 15px;' id='error-msg'>"
+        . $_SESSION['error'] . "</div>";
+    unset($_SESSION['error']); // Clear the error after displaying it
+}
 
-    // Check if there's a success message and display it
-    if (isset($_SESSION['success']) && !empty($_SESSION['success'])) {
-        echo "<div class='success-msg' style='color: green; text-align: center; margin-bottom: 15px;'>"
-            . $_SESSION['success'] . "</div>";
-        unset($_SESSION['success']); // Clear the success message after displaying it
-    }
-    ?>
+// Check if there's a success message and display it
+if (isset($_SESSION['success']) && !empty($_SESSION['success'])) {
+    echo "<div class='success-msg' style='color: green; text-align: center; margin-bottom: 15px;' id='success-msg'>"
+        . $_SESSION['success'] . "</div>";
+    unset($_SESSION['success']); // Clear the success message after displaying it
+}
+?>
 
 
     <form class="registration-form" action="admin/register_driver1.php" method="POST" enctype="multipart/form-data">
@@ -113,100 +113,119 @@ include('./partials/header.php');
 </style>
 
 <script>
-    const canvas = document.createElement('canvas');
-    const signaturePad = document.getElementById('signature_pad');
-    signaturePad.appendChild(canvas);
+const canvas = document.createElement('canvas');
+const signaturePad = document.getElementById('signature_pad');
+const signatureFile = document.getElementById('signature_file');
+const clearBtn = document.getElementById('clear_signature');
+const hiddenSignatureInput = document.getElementById('signature_data');
 
-    function resizeCanvas() {
-        canvas.width = signaturePad.clientWidth;
-        canvas.height = signaturePad.clientHeight;
+signaturePad.appendChild(canvas);
+canvas.width = signaturePad.clientWidth;
+canvas.height = signaturePad.clientHeight;
+const ctx = canvas.getContext('2d');
+
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+
+// Function to handle drawing
+function draw(x, y) {
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    [lastX, lastY] = [x, y];
+}
+
+// Mouse events
+canvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    draw(e.offsetX, e.offsetY);
+});
+
+canvas.addEventListener('mouseup', () => {
+    isDrawing = false;
+    hiddenSignatureInput.value = canvas.toDataURL(); // Save signature data
+    signatureFile.disabled = true; // Disable file upload when signature is drawn
+    clearBtn.disabled = false; // Enable the clear button
+});
+
+// Touch events for mobile devices
+canvas.addEventListener('touchstart', (e) => {
+    isDrawing = true;
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    lastX = touch.clientX - rect.left;
+    lastY = touch.clientY - rect.top;
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    draw(x, y);
+    e.preventDefault(); // Prevent scrolling while drawing
+});
+
+canvas.addEventListener('touchend', () => {
+    isDrawing = false;
+    hiddenSignatureInput.value = canvas.toDataURL(); // Save signature data
+    signatureFile.disabled = true; // Disable file upload when signature is drawn
+    clearBtn.disabled = false; // Enable the clear button
+});
+
+// Clear signature
+clearBtn.addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hiddenSignatureInput.value = ''; // Clear signature data
+    signatureFile.disabled = false; // Re-enable file upload
+    clearBtn.disabled = true; // Disable clear button
+});
+
+// Disable canvas if file is selected
+function disableCanvas() {
+    if (signatureFile.files.length > 0) {
+        canvas.style.pointerEvents = 'none'; // Disable canvas drawing
+        hiddenSignatureInput.value = ''; // Clear canvas data
+        clearBtn.disabled = true; // Disable clear button
+    } else {
+        canvas.style.pointerEvents = 'auto'; // Enable canvas drawing
     }
+}
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();  // Initial canvas setup
-
-    const ctx = canvas.getContext('2d');
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
-
-    const signatureFileInput = document.getElementById('signature_file');
-    const clearSignatureButton = document.getElementById('clear_signature');
-    const signatureDataInput = document.getElementById('signature_data');
-
-    // Handle touch events for mobile devices
-    canvas.addEventListener('touchstart', (e) => {
-        isDrawing = true;
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        lastX = touch.clientX - rect.left;
-        lastY = touch.clientY - rect.top;
-        signatureFileInput.disabled = true; // Disable file input when drawing
-    });
-
-    canvas.addEventListener('touchmove', (e) => {
-        if (!isDrawing) return;
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        const offsetX = touch.clientX - rect.left;
-        const offsetY = touch.clientY - rect.top;
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(offsetX, offsetY);
-        ctx.stroke();
-        [lastX, lastY] = [offsetX, offsetY];
-    });
-
-    canvas.addEventListener('touchend', () => isDrawing = false);
-
-    canvas.addEventListener('mousedown', (e) => {
-        isDrawing = true;
-        [lastX, lastY] = [e.offsetX, e.offsetY];
-        signatureFileInput.disabled = true; // Disable file input when drawing
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
-        if (!isDrawing) return;
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-        [lastX, lastY] = [e.offsetX, e.offsetY];
-    });
-
-    canvas.addEventListener('mouseup', () => isDrawing = false);
-    canvas.addEventListener('mouseout', () => isDrawing = false);
-
-    signatureFileInput.addEventListener('change', () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas when file is uploaded
-        canvas.style.pointerEvents = 'none'; // Disable drawing on canvas
-    });
-
-    clearSignatureButton.addEventListener('click', () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.style.pointerEvents = 'auto'; // Re-enable canvas for drawing
-        signatureFileInput.disabled = false; // Re-enable file input
-        signatureFileInput.value = ''; // Clear the file input
-    });
-
-    document.querySelector('form').addEventListener('submit', (event) => {
-        const signatureFile = signatureFileInput.files.length > 0;
-        const signatureData = canvas.toDataURL();
-
-        // Store signature data only if drawn
-        if (!signatureFile) {
-            signatureDataInput.value = signatureData;
-        } else {
-            signatureDataInput.value = ''; // Clear if using the uploaded file
-        }
-    });
+// Disable file input when the canvas is drawn on
+document.querySelector('form').addEventListener('submit', (event) => {
+    if (!signatureFile.files.length && !hiddenSignatureInput.value) {
+        event.preventDefault(); // Prevent form submission if neither signature method is used
+        alert('Please provide a signature using one of the methods.');
+    }
+});
 </script>
 
 
+<script>
+// Automatically hide messages after 3 seconds
+setTimeout(function() {
+    var errorMsg = document.getElementById('error-msg');
+    var successMsg = document.getElementById('success-msg');
+    
+    if (errorMsg) {
+        errorMsg.style.display = 'none';
+    }
+    if (successMsg) {
+        successMsg.style.display = 'none';
+    }
+}, 3000); // 3000 milliseconds = 3 seconds
+</script>
 
 <?php
 include('./partials/footer.php');
