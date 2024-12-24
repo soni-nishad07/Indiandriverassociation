@@ -34,12 +34,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if (!move_uploaded_file($_FILES['driver_photo']['tmp_name'], $photo_destination)) {
                 $_SESSION['error'] = "Failed to upload the driver photo.";
-                header("Location: ../admin/register_driver1.php");
+                header("Location: ../registration.php");
                 exit();
             }
         } else {
             $_SESSION['error'] = "Invalid photo file type.";
-            header("Location: ../admin/register_driver1.php");
+            header("Location: ../registration.php");
             exit();
         }
     }
@@ -61,14 +61,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if (!move_uploaded_file($_FILES['signature_file']['tmp_name'], $signature_destination)) {
                 $_SESSION['error'] = "Failed to upload the signature.";
-                header("Location: ../admin/register_driver1.php");
+                header("Location: ../registration.php");
                 exit();
             }
 
             $signature_file = $signature_filename;
         } else {
             $_SESSION['error'] = "Invalid signature file type.";
-            header("Location: ../admin/register_driver1.php");
+            header("Location: ../registration.php");
             exit();
         }
     }
@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (file_put_contents($signature_path, $decoded_signature) === false) {
             $_SESSION['error'] = "Failed to save the signature.";
-            header("Location: ../admin/register_driver1.php");
+            header("Location: ../registration.php");
             exit();
         }
 
@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if we have at least one signature (file or drawn)
     if (empty($signature_file)) {
         $_SESSION['error'] = "Signature is required.";
-        header("Location: ../admin/register_driver1.php");
+        header("Location: ../registration.php");
         exit();
     }
 
@@ -111,20 +111,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt->execute()) {
             $_SESSION['success'] = "Driver registered successfully.";
-            header("Location: ../admin/drivers_info.php");
+            // header("Location: ../registration.php");
+            echo "<script>alert('Driver registered successfully.'); window.location.href=' ../registration.php';</script>";
             exit();
         } else {
             $_SESSION['error'] = "Database insertion error: " . $stmt->error;
-            header("Location: ../admin/register_driver1.php");
+            header("Location: ../registration.php");
             exit();
         }
     } else {
         $_SESSION['error'] = "Database preparation error: " . $conn->error;
-        header("Location: ../admin/register_driver1.php");
+        header("Location:../registration.php");
         exit();
     }
 } else {
-    header("Location: ../admin/register_driver1.php");
+    header("Location: ../registration.php");
     exit();
 }
 ?>
